@@ -30,20 +30,33 @@ export function RSVPForm() {
           message: formData.message || null
         }]);
       
-      const googleScriptURL = "https://script.google.com/macros/s/AKfycbyw210H_hQM01DPuploPLIL8ZDpgC42vR83PHSKPzB7LcSbGlF2n1XxpjzVn6BCcVP4/exec"; // thay bằng link của bạn
+      const googleScriptURL = "https://script.google.com/macros/s/AKfycby8Emw73a17wEdY2c6-1TkGNw_gBsXTyosXzD2M3mVNXWc_8MCq6YFkIhZnMpDvSWRZ/exec"; // thay bằng link của bạn
       
-      // const response = await fetch(googleScriptURL, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: encodeURIComponent(JSON.stringify(formData)),
-      // });
-      const res = await fetch(googleScriptURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const text = await res.text();
-      console.log("Response:", text);
+      try {
+        console.log("🟢 Sending data to Google Script:", formData);
+
+        const res = await fetch(googleScriptURL, {
+          method: "POST",
+          // IMPORTANT: use text/plain so browser DOES NOT preflight (no OPTIONS)
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          redirect: "follow",                 // follow the one-time redirect Google returns
+          body: JSON.stringify(formData)      // still send JSON string, but with text/plain header
+        });
+
+        console.log("🟡 Response status:", res.status);
+        const text = await res.text();
+        console.log("🟢 Response text:", text);
+        // try parse JSON:
+        try {
+          const json = JSON.parse(text);
+          console.log("🟢 Parsed JSON response:", json);
+        } catch (e) {
+          console.warn("⚠️ Response not valid JSON:", e);
+        }
+      } catch (err) {
+        console.error("🔴 Error sending to Google Script:", err);
+      }
+
 
 
       if (error) throw error;
