@@ -30,13 +30,19 @@ export function RSVPForm() {
           message: formData.message || null
         }]);
       
-      const googleScriptURL = "https://script.google.com/macros/s/AKfycbwr5fIBcd2ecrrt0Rln7qPG2xIy-uUWARCS0lR2zqzItEllvRmlp9A8eMJuaJNJgyYw/exec"; // thay bằng link của bạn
+      const googleScriptURL = "https://script.google.com/macros/s/AKfycbwdub8KYgRkPzoUWlnQ3WwshBsJCeAkHJAyOmFbaj_5AK0gDg38rtaSV-K14t4u7wgE/exec"; // thay bằng link của bạn
       
+      // const response = await fetch(googleScriptURL, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: encodeURIComponent(JSON.stringify(formData)),
+      // });
       const response = await fetch(googleScriptURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: encodeURIComponent(JSON.stringify(formData)),
+        body: JSON.stringify(formData),
       });
+
       console.log("🟡 Response status:", response.status);
       const text = await response.text();
       console.log("🟢 Response text:", text);
