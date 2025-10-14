@@ -17,6 +17,7 @@ export function RSVPForm() {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus('idle');
+    console.log("🟢 Sending data to Google Script:", formData);
 
     try {
       const { error } = await supabase
@@ -29,12 +30,17 @@ export function RSVPForm() {
           message: formData.message || null
         }]);
       
-      const googleScriptURL = "https://script.google.com/macros/s/AKfycbwrUa-bRfeY9k6Tcybx7K_0zo7oku3ellGeTBzpvRakVcqLPAJBA3IynPWdP4vVggx2/exec"; // thay bằng link của bạn
-      await fetch(googleScriptURL, {
+      const googleScriptURL = "https://script.google.com/macros/s/AKfycbwr5fIBcd2ecrrt0Rln7qPG2xIy-uUWARCS0lR2zqzItEllvRmlp9A8eMJuaJNJgyYw/exec"; // thay bằng link của bạn
+      
+      const response = await fetch(googleScriptURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: encodeURIComponent(JSON.stringify(formData)),
       });
+      console.log("🟡 Response status:", response.status);
+      const text = await response.text();
+      console.log("🟢 Response text:", text);
+
 
       if (error) throw error;
 
