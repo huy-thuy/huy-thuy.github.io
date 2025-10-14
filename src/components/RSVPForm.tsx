@@ -135,8 +135,8 @@ export function RSVPForm() {
         <div className="space-y-3">
           {[
             { value: 'definitely', label: 'Chắc chắn sẽ đến', emoji: '✓', color: 'green' },
-            { value: 'maybe', label: 'Có lẽ sẽ đến', emoji: '?', color: 'amber' },
-            { value: 'cannot', label: 'Không thể đến', emoji: '✗', color: 'gray' }
+            { value: 'maybe', label: 'Có lẽ sẽ đến', emoji: '?', color: 'green' },
+            { value: 'cannot', label: 'Không thể đến', emoji: '✗', color: 'green' }
           ].map((option) => (
             <button
               key={option.value}
