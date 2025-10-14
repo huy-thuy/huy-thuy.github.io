@@ -13,7 +13,7 @@ function App() {
   const [scrollY, setScrollY] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const weddingDate = new Date('2024-12-31T10:00:00');
+  const weddingDate = new Date('2025-11-30T10:00:00');
 
   useEffect(() => {
     audioRef.current = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
@@ -133,7 +133,7 @@ function App() {
           </h2>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-6 leading-tight">
-            Văn A <span className="text-rose-300">&</span> Thị B
+            Hoàng Huy <span className="text-rose-300">&</span> Hồng Thủy
           </h1>
 
           <div className="flex items-center justify-center gap-4 text-white/90 text-lg md:text-xl mb-12">
@@ -244,7 +244,7 @@ function App() {
                 <div className="flex-1">
                   <h3 className="text-2xl font-semibold text-gray-800 mb-4">Thời Gian</h3>
                   <div className="space-y-2 text-gray-700">
-                    <p className="text-lg"><strong>Ngày:</strong> Thứ Ba, 31 tháng 12, 2024</p>
+                    <p className="text-lg"><strong>Ngày:</strong> Chủ Nhật, 30 tháng 11, 2025</p>
                     <p className="text-lg"><strong>Giờ:</strong> 10:00 Sáng</p>
                   </div>
                 </div>
@@ -259,10 +259,10 @@ function App() {
                 <div className="flex-1">
                   <h3 className="text-2xl font-semibold text-gray-800 mb-4">Địa Điểm</h3>
                   <div className="space-y-2 text-gray-700">
-                    <p className="text-lg font-medium">Nhà Hàng Tiệc Cưới ABC</p>
-                    <p className="text-base">123 Đường XYZ, Quận 1, TP.HCM</p>
+                    <p className="text-lg font-medium">Nhà Hàng Tiệc Cưới TTC Palace - Vĩnh Long (Bến Tre)</p>
+                    <p className="text-base">Bên cạnh bờ hồ Trúc Giang, số 16 Hai Bà Trưng, Phường An Hội , Tỉnh Vĩnh Long</p>
                     <a
-                      href="https://maps.google.com"
+                      href="https://maps.app.goo.gl/iiUyNZPxXga5Ecv1A"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 mt-3 text-rose-600 hover:text-rose-700 font-medium transition-colors"
@@ -315,27 +315,26 @@ function App() {
               <div className="text-center md:text-left space-y-3">
                 <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
                   <span className="text-sm font-medium text-gray-500">Ngân hàng:</span>
-                  <span className="font-semibold">Vietcombank</span>
+                  <span className="font-semibold">BIDV</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
                   <span className="text-sm font-medium text-gray-500">STK:</span>
-                  <span className="font-semibold">1234567890</span>
+                  <span className="font-semibold">7210791318</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
                   <span className="text-sm font-medium text-gray-500">Chủ TK:</span>
-                  <span className="font-semibold">NGUYEN VAN A</span>
+                  <span className="font-semibold">HUYNH HOANG HUY</span>
                 </div>
               </div>
 
               <div className="flex-shrink-0">
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl shadow-md">
                   <div className="w-40 h-40 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center">
-                    <div className="text-center p-4">
-                      <Gift className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                      <p className="text-gray-400 text-xs">
-                        QR Code
-                      </p>
-                    </div>
+                    <img
+                      src="/assets/qr-bidv.jpg"
+                      alt="QR chuyển khoản BIDV"
+                      className="w-full h-full object-contain rounded-lg"
+                    />
                   </div>
                 </div>
               </div>
@@ -349,7 +348,7 @@ function App() {
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <p className="text-2xl md:text-3xl font-serif text-gray-700 mb-6 italic">
-              Cảm ơn bạn đã là một phần trong ngày đặc biệt của chúng mình
+              Cảm ơn bạn đã là một phần trong ngày đặc biệt của chúng&nbsp;mình
             </p>
             <div className="flex justify-center gap-3 mb-8">
               {[...Array(5)].map((_, i) => (
@@ -363,7 +362,7 @@ function App() {
           </div>
 
           <div className="text-gray-500 text-sm">
-            <p>With love, Văn A & Thị B</p>
+            <p>With love, Hoàng Huy & Hồng Thủy</p>
           </div>
         </div>
       </footer>
