@@ -138,7 +138,7 @@ function App() {
 
           <div className="flex items-center justify-center gap-4 text-white/90 text-lg md:text-xl mb-12">
             <Calendar className="w-5 h-5" />
-            <span>31.12.2024</span>
+            <span>30.11.2025</span>
             <span className="text-rose-300">•</span>
             <Clock className="w-5 h-5" />
             <span>10:00 AM</span>

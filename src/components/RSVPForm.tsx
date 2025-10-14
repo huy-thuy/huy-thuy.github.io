@@ -28,6 +28,13 @@ export function RSVPForm() {
           phone: formData.phone || null,
           message: formData.message || null
         }]);
+      
+      const googleScriptURL = "https://script.google.com/macros/s/AKfycbwrUa-bRfeY9k6Tcybx7K_0zo7oku3ellGeTBzpvRakVcqLPAJBA3IynPWdP4vVggx2/exec"; // thay bằng link của bạn
+      await fetch(googleScriptURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
       if (error) throw error;
 
