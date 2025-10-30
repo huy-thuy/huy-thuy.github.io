@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Heart, MapPin, Calendar, Clock, Gift, Volume2, VolumeX, ChevronDown, Send } from 'lucide-react';
+import { Heart, MapPin, Calendar, Clock, Gift, Volume2, VolumeX, ChevronDown, Send, Flower2 } from 'lucide-react';
 import { RSVPForm } from './components/RSVPForm';
 
 function App() {
@@ -14,6 +14,26 @@ function App() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const weddingDate = new Date('2025-11-30T10:00:00');
+  const flowers = useRef(
+
+    Array.from({ length: 12 }, () => ({
+
+      left: Math.random() * 100,
+
+      animationDelay: Math.random() * 8,
+
+      animationDuration: 18 + Math.random() * 12,
+
+      swayDuration: 3 + Math.random() * 2,
+
+      size: 20 + Math.random() * 15,
+
+      colorIndex: Math.floor(Math.random() * 4)
+
+    }))
+
+  ).current;
+
 
   useEffect(() => {
     audioRef.current = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
@@ -72,22 +92,93 @@ function App() {
 
   return (
     <div className="relative bg-gradient-to-b from-amber-50 via-rose-50 to-pink-100 min-h-screen overflow-x-hidden">
-      {/* Floating particles */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${5 + Math.random() * 10}s`
-            }}
-          >
-            <Heart className="w-4 h-4 text-rose-300 fill-rose-300 opacity-30" />
-          </div>
-        ))}
+            {/* Falling Flowers */}
+
+      <div className="fixed inset-0 overflow-visible pointer-events-none z-10">
+
+        {flowers.map((flower, i) => {
+
+          const colors = [
+
+            { petals: '#FFB6C1', center: '#FF69B4' },
+
+            { petals: '#FFC0CB', center: '#FF1493' },
+
+            { petals: '#FFDAB9', center: '#FFA500' },
+
+            { petals: '#FFE4E1', center: '#FFC0CB' }
+
+          ];
+
+          const color = colors[flower.colorIndex];
+
+
+
+          return (
+
+            <div
+
+              key={i}
+
+              className="absolute animate-fall-continuous"
+
+              style={{
+
+                left: `${flower.left}%`,
+
+                animationDelay: `${flower.animationDelay}s`,
+
+                animationDuration: `${flower.animationDuration}s`
+
+              }}
+
+            >
+
+              <svg
+
+                width={flower.size}
+
+                height={flower.size}
+
+                viewBox="0 0 50 50"
+
+                className="animate-sway"
+
+                style={{
+
+                  animationDuration: `${flower.swayDuration}s`,
+
+                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+
+                }}
+
+              >
+
+                <g transform="translate(25, 25)">
+
+                  <ellipse cx="0" cy="-12" rx="8" ry="12" fill={color.petals} opacity="0.9" transform="rotate(0)" />
+
+                  <ellipse cx="0" cy="-12" rx="8" ry="12" fill={color.petals} opacity="0.9" transform="rotate(72)" />
+
+                  <ellipse cx="0" cy="-12" rx="8" ry="12" fill={color.petals} opacity="0.9" transform="rotate(144)" />
+
+                  <ellipse cx="0" cy="-12" rx="8" ry="12" fill={color.petals} opacity="0.9" transform="rotate(216)" />
+
+                  <ellipse cx="0" cy="-12" rx="8" ry="12" fill={color.petals} opacity="0.9" transform="rotate(288)" />
+
+                  <circle cx="0" cy="0" r="5" fill={color.center} opacity="0.95" />
+
+                  <circle cx="0" cy="0" r="3" fill="#FFF9E3" opacity="0.7" />
+
+                </g>
+
+              </svg>
+
+            </div>
+
+          );
+
+        })}
       </div>
 
       {/* Music Control */}

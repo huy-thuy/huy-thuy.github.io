@@ -48,6 +48,23 @@
     animation: float 10s ease-in-out infinite;
   }
 
+  
+  .animate-fall-continuous {
+
+    animation: fallContinuous linear infinite;
+
+  }
+
+
+
+  .animate-sway {
+
+    animation: sway ease-in-out infinite;
+
+  }
+
+
+
   .shadow-3xl {
     box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
   }
@@ -146,6 +163,41 @@
     opacity: 0.5;
   }
 }
+
+@keyframes fallContinuous {
+
+  0% {
+
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+
+  }
+
+  100% {
+
+    transform: translateY(110vh) translateX(100px) rotate(360deg);
+
+  }
+
+}
+
+
+
+@keyframes sway {
+
+  0%, 100% {
+
+    transform: rotate(-5deg);
+
+  }
+
+  50% {
+
+    transform: rotate(5deg);
+
+  }
+
+}
+
 
 html {
   scroll-behavior: smooth;
