@@ -201,7 +201,8 @@ function App() {
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-300"
           style={{
-            backgroundImage: '/assets/hinh_1.JPG',
+            backgroundImage: "url('/assets/hinh_1.JPG')",
+            backgroundSize: '1920px auto',  
             transform: `scale(${1 + scrollY * 0.0003})`,
             filter: 'brightness(0.7)'
           }}
