@@ -36,7 +36,7 @@ function App() {
 
 
   useEffect(() => {
-    audioRef.current = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+    audioRef.current = new Audio('/assets/mylove.mp3');
     audioRef.current.loop = true;
     audioRef.current.volume = 0.4;
 
@@ -201,7 +201,7 @@ function App() {
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-300"
           style={{
-            backgroundImage: 'url(https://images.pexels.com/photos/265722/pexels-photo-265722.jpeg?auto=compress&cs=tinysrgb&w=1920)',
+            backgroundImage: '/assets/hinh_1.JPG',
             transform: `scale(${1 + scrollY * 0.0003})`,
             filter: 'brightness(0.7)'
           }}
@@ -256,7 +256,7 @@ function App() {
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             <div className="group relative overflow-hidden rounded-3xl shadow-2xl aspect-[4/5] animate-fade-in-left">
               <img
-                src="https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=800"
+                src="/assets/hinh_2.JPG"
                 alt="Couple 1"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
@@ -265,7 +265,7 @@ function App() {
 
             <div className="group relative overflow-hidden rounded-3xl shadow-2xl aspect-[4/5] animate-fade-in-right">
               <img
-                src="https://images.pexels.com/photos/1445696/pexels-photo-1445696.jpeg?auto=compress&cs=tinysrgb&w=800"
+                src="/assets/hinh_3.JPG"
                 alt="Couple 2"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
@@ -406,15 +406,15 @@ function App() {
               <div className="text-center md:text-left space-y-3">
                 <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
                   <span className="text-sm font-medium text-gray-500">Ngân hàng:</span>
-                  <span className="font-semibold">BIDV</span>
+                  <span className="font-semibold">Vietcombank</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
                   <span className="text-sm font-medium text-gray-500">STK:</span>
-                  <span className="font-semibold">7210791318</span>
+                  <span className="font-semibold">0171003478512</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
                   <span className="text-sm font-medium text-gray-500">Chủ TK:</span>
-                  <span className="font-semibold">HUYNH HOANG HUY</span>
+                  <span className="font-semibold">PHAN THI HONG THUY</span>
                 </div>
               </div>
 
@@ -422,8 +422,8 @@ function App() {
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl shadow-md">
                   <div className="w-40 h-40 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center">
                     <img
-                      src="/assets/qr-bidv.jpg"
-                      alt="QR chuyển khoản BIDV"
+                      src="/assets/qr-vietcombank.jpg"
+                      alt="QR chuyển khoản Vietcombank"
                       className="w-full h-full object-contain rounded-lg"
                     />
                   </div>
