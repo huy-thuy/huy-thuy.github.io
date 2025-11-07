@@ -1,6 +1,98 @@
 import { useState, useEffect, useRef } from 'react';
-import { Heart, MapPin, Calendar, Clock, Gift, Volume2, VolumeX, ChevronDown, Send, Flower2 } from 'lucide-react';
+import { Heart, MapPin, Calendar, Clock, Gift, Volume2, VolumeX, ChevronDown, Send } from 'lucide-react';
 import { RSVPForm } from './components/RSVPForm';
+
+// Fit text to single line: shrink font until fits container (force one line)
+function useFitTextSingleLine(ref: React.RefObject<HTMLElement>, deps: any[] = [], minFont = 6) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => {
+      if (!el) return;
+      // reset inline size to allow recompute
+      el.style.fontSize = '';
+      // get computed starting font size
+      let font = parseFloat(window.getComputedStyle(el).fontSize || '16');
+      // reduce until fits horizontally or reach minFont
+      // always enforce single-line behaviour here
+      while (el.scrollWidth > el.clientWidth && font > minFont) {
+        font = Math.max(minFont, font - 1);
+        el.style.fontSize = `${font}px`;
+      }
+    };
+    update();
+    const ro = new (window as any).ResizeObserver(update);
+    ro.observe(el);
+    window.addEventListener('resize', update);
+    return () => {
+      try { ro.disconnect(); } catch { /* ignore */ }
+      window.removeEventListener('resize', update);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+}
+
+const FitSingleLine: React.FC<React.PropsWithChildren<{ className?: string; style?: React.CSSProperties }>> = ({ children, className = '', style }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  useFitTextSingleLine(ref, [children], 6);
+  // FORCE single-line on all sizes
+  return (
+    <div
+      ref={ref}
+      className={`${className} whitespace-nowrap`}
+      style={{ overflow: 'hidden', textOverflow: 'ellipsis', ...style }}
+    >
+      {children}
+    </div>
+  );
+};
+
+// ----------------- ADD: sync-fit hook (ensure same font-size across paired lines) -----------------
+function useSyncFitPairs(
+  pairs: Array<[React.RefObject<HTMLElement>, React.RefObject<HTMLElement>]>,
+  minFont = 6
+) {
+  useEffect(() => {
+    if (!pairs || !pairs.length) return;
+    const update = () => {
+      pairs.forEach(([aRef, bRef]) => {
+        const a = aRef.current;
+        const b = bRef.current;
+        if (!a || !b) return;
+        // reset sizes
+        a.style.fontSize = '';
+        b.style.fontSize = '';
+        const fontA = parseFloat(getComputedStyle(a).fontSize || '16');
+        const fontB = parseFloat(getComputedStyle(b).fontSize || '16');
+        let font = Math.min(fontA, fontB);
+
+        // immediately apply the minimum so both start equal
+        a.style.fontSize = `${font}px`;
+        b.style.fontSize = `${font}px`;
+
+        // reduce until both fit
+        while ((a.scrollWidth > a.clientWidth || b.scrollWidth > b.clientWidth) && font > minFont) {
+          font = Math.max(minFont, font - 1);
+          a.style.fontSize = `${font}px`;
+          b.style.fontSize = `${font}px`;
+        }
+      });
+    };
+
+    update();
+    const ro = new (window as any).ResizeObserver(update);
+    pairs.forEach(([aRef, bRef]) => {
+      if (aRef.current) ro.observe(aRef.current);
+      if (bRef.current) ro.observe(bRef.current);
+    });
+    window.addEventListener('resize', update);
+    return () => {
+      try { ro.disconnect(); } catch {}
+      window.removeEventListener('resize', update);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pairs.length]);
+}
 
 function App() {
   const [timeLeft, setTimeLeft] = useState({
@@ -11,29 +103,62 @@ function App() {
   });
   const [isPlaying, setIsPlaying] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [showRSVP, setShowRSVP] = useState(false);
+  const [showWish, setShowWish] = useState(false);
+  const [showAllAlbum, setShowAllAlbum] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // refs for syncing font-size across left/right rows
+  const leftRow1 = useRef<HTMLDivElement | null>(null);
+  const leftRow2 = useRef<HTMLDivElement | null>(null);
+  const leftRow3 = useRef<HTMLDivElement | null>(null);
+  const rightRow1 = useRef<HTMLDivElement | null>(null);
+  const rightRow2 = useRef<HTMLDivElement | null>(null);
+  const rightRow3 = useRef<HTMLDivElement | null>(null);
+
+  // ensure paired lines use same font-size
+  useSyncFitPairs(
+    [
+      [leftRow1, rightRow1],
+      [leftRow2, rightRow2],
+      [leftRow3, rightRow3]
+    ],
+    8
+  );
 
   const weddingDate = new Date('2025-11-30T10:00:00');
   const flowers = useRef(
-
     Array.from({ length: 12 }, () => ({
-
       left: Math.random() * 100,
-
       animationDelay: Math.random() * 8,
-
       animationDuration: 18 + Math.random() * 12,
-
       swayDuration: 3 + Math.random() * 2,
-
       size: 20 + Math.random() * 15,
-
       colorIndex: Math.floor(Math.random() * 4)
-
     }))
-
   ).current;
 
+  // Album image filenames (place the actual files into public/assets/album/)
+  const albumFiles = [
+    'IMGL0001.jpg',
+    'IMGL0163.jpg',
+    'IMGL1707.jpg',
+    'IMGL0355.jpg',
+    'IMGL0368.jpg',
+    'IMGL0434.jpg',
+    'IMGL0576.jpg',
+    'IMGL0944.jpg',
+    'IMGL0268.jpg',
+    'IMGL1720.jpg',
+    'IMGL2897.jpg',
+    'IMGL9201.jpg',
+    'IMGL9929.jpg',
+    'IMGL9781.jpg',
+    'IMGL9869.jpg',
+    'IMGL9901.jpg',
+    'IMGL9450.jpg'
+    // IMGL9168.jpg removed from grid because it's used as the full-width banner below
+  ];
 
   useEffect(() => {
     audioRef.current = new Audio('/assets/mylove.mp3');
@@ -79,6 +204,36 @@ function App() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Observe album images and add slide-in classes when they enter viewport
+  useEffect(() => {
+     const els = Array.from(document.querySelectorAll<HTMLElement>('[data-anim]'));
+     if (!els.length) return;
+ 
+     const obs = new IntersectionObserver(
+       (entries) => {
+         entries.forEach((entry) => {
+           if (!entry.isIntersecting) return;
+           const el = entry.target as HTMLElement;
+           const dir = el.dataset.anim === 'right' ? 'animate-slide-in-right' : 'animate-slide-in-left';
+           const delay = el.dataset.delay ?? '0s';
+           el.style.animationDelay = delay;
+           el.classList.add(dir);
+           el.classList.remove('opacity-0');
+           obs.unobserve(el);
+         });
+       },
+       { threshold: 0.15 }
+     );
+ 
+     els.forEach((el) => {
+       // start hidden
+       el.classList.add('opacity-0');
+       obs.observe(el);
+     });
+ 
+     return () => obs.disconnect();
+  }, [showAllAlbum]); // re-run when user reveals rest of album so new elements get observed
 
   const toggleMusic = () => {
     if (isPlaying) {
@@ -202,7 +357,8 @@ function App() {
           className="absolute inset-0 bg-cover bg-center transition-transform duration-300"
           style={{
             backgroundImage: "url('/assets/hinh_1.JPG')",
-            backgroundSize: '1920px auto',  
+            backgroundSize: 'cover',               // make image cover the area responsively
+            backgroundPosition: 'center 20%',      // shift image upward (adjust % to taste)
             transform: `scale(${1 + scrollY * 0.0003})`,
             filter: 'brightness(0.7)'
           }}
@@ -221,7 +377,7 @@ function App() {
           </div>
 
           <h2 className="text-2xl md:text-3xl text-white/90 font-light mb-4 tracking-widest uppercase">
-            We're Getting Married
+            Thư mời đám cưới
           </h2>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-6 leading-tight">
@@ -323,6 +479,169 @@ function App() {
       <section className="relative py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
+            <div className="flex flex-col items-stretch justify-center gap-6 mb-8">
+              {/* PARENTS: horizontal row (Nhà trai / Nhà gái) */}
+              <div className="flex flex-row items-stretch justify-center gap-4 mb-8 w-full max-w-6xl mx-auto px-2">
+                <div className="flex-1 min-w-0 px-1">
+                  <div className="p-4 md:p-6 rounded-3xl text-center">
+                    <h4 className="text-base md:text-lg font-semibold text-gray-800 mb-2">Nhà trai</h4>
+
+                    <div className="space-y-1">
+                      <div
+                        ref={leftRow1}
+                        className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-nowrap overflow-hidden"
+                        aria-label="Nhà trai - dòng 1"
+                      >
+                        <span className="font-medium">Ông</span> Huỳnh Hữu Hoàng
+                      </div>
+                      <div
+                        ref={leftRow2}
+                        className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-nowrap overflow-hidden"
+                        aria-label="Nhà trai - dòng 2"
+                      >
+                        <span className="font-medium">Bà</span> Phạm Thị Thanh Hiếu
+                      </div>
+                      <div
+                        ref={leftRow3}
+                        className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-nowrap overflow-hidden"
+                        aria-label="Nhà trai - dòng 3"
+                      >
+                        Châu Thành, tỉnh Bến Tre
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex-1 min-w-0 px-1">
+                  <div className="p-4 md:p-6 rounded-3xl text-center">
+                    <h4 className="text-base md:text-lg font-semibold text-gray-800 mb-2">Nhà gái</h4>
+
+                    <div className="space-y-1">
+                      <div
+                        ref={rightRow1}
+                        className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-nowrap overflow-hidden"
+                        aria-label="Nhà gái - dòng 1"
+                      >
+                        <span className="font-medium">Ông</span> Phan Vủ Thành
+                      </div>
+                      <div
+                        ref={rightRow2}
+                        className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-nowrap overflow-hidden"
+                        aria-label="Nhà gái - dòng 2"
+                      >
+                        <span className="font-medium">Bà</span> Nguyễn Thị Hồng Thu
+                      </div>
+                      <div
+                        ref={rightRow3}
+                        className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-nowrap overflow-hidden"
+                        aria-label="Nhà gái - dòng 3"
+                      >
+                        Mỏ Cày Nam, tỉnh Bến Tre
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* NAMES: separate horizontal row (Chú rể / Cô dâu) */}
+              <div className="flex flex-row items-center justify-center gap-4 mb-8 w-full max-w-6xl mx-auto px-2 relative">
+                <div className="flex-1 min-w-0 px-1">
+                  <div className="p-4 md:p-6 text-center">
+                    <h5 className="text-sm md:text-base font-semibold text-gray-700 mb-2">Chú rể</h5>
+                    <FitSingleLine className="text-xl md:text-2xl font-script text-gray-800">
+                      Hoàng Huy
+                    </FitSingleLine>
+                  </div>
+                </div>
+
+                {/* Artistic heart between names */}
+                <div className="flex-shrink-0 flex items-center justify-center mx-2 z-20">
+                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center bg-white/95 shadow-lg transform transition-all duration-300 hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-8 h-8 md:w-10 md:h-10" role="img" aria-label="Trái tim nghệ thuật">
+                      <defs>
+                        <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                          <stop offset="0" stopColor="#ff9ab3"/>
+                          <stop offset="1" stopColor="#ff5a78"/>
+                        </linearGradient>
+                        <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+                          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#ff8aa3" floodOpacity="0.25"/>
+                        </filter>
+                      </defs>
+
+                      {/* filled heart with subtle hand-drawn outline */}
+                      <g filter="url(#sh)">
+                        <path
+                          d="M32 52s-20-11-24-16c-6-7 2-18 12-14 4 2 7 6 10 6s6-4 10-6c10-4 18 7 12 14-4 5-20 16-20 16z"
+                          fill="url(#g1)"
+                          opacity="0.98"
+                        />
+                      </g>
+
+                      <path
+                        d="M32 50s-18-11-22-16c-6-7 1-17 11-13 4 2 7 6 11 6s7-4 11-6c10-4 17 6 11 13-4 5-22 16-22 16z"
+                        fill="none"
+                        stroke="#fff6"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+
+                      {/* small sparkles */}
+                      <g fill="#fff8" opacity="0.9">
+                        <circle cx="20" cy="18" r="1.2"/>
+                        <circle cx="44" cy="16" r="1.6"/>
+                        <circle cx="34" cy="10" r="1"/>
+                      </g>
+
+                      {/* gentle pulse animation */}
+                      <style>{`
+                        @keyframes subtle-pulse {
+                          0% { transform: scale(1); opacity: 1; }
+                          50% { transform: scale(1.08); opacity: 0.95; }
+                          100% { transform: scale(1); opacity: 1; }
+                        }
+                        svg { animation: subtle-pulse 3.5s ease-in-out infinite; transform-origin: center; }
+                      `}</style>
+                    </svg>
+                  </div>
+                </div>
+
+                <div className="flex-1 min-w-0 px-1">
+                  <div className="p-4 md:p-6 text-center">
+                    <h5 className="text-sm md:text-base font-semibold text-gray-700 mb-2">Cô dâu</h5>
+                    <FitSingleLine className="text-xl md:text-2xl font-script text-gray-800">
+                      Hồng Thủy
+                    </FitSingleLine>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* TWO ADJACENT PHOTOS — no horizontal scroll, images shrink-to-fit and keep aspect */}
+            <div className="flex flex-row items-stretch gap-4 mb-8 w-full max-w-7xl mx-auto px-2">
+              <div className="flex-1 min-w-0">
+                <div className="group relative overflow-hidden rounded-3xl shadow-2xl aspect-[4/5]">
+                  <img
+                    src="/assets/chure.JPG"
+                    alt="Hoàng Huy"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="group relative overflow-hidden rounded-3xl shadow-2xl aspect-[4/5]">
+                  <img
+                    src="/assets/codau.JPG"
+                    alt="Hồng Thủy"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </div>
+            </div>
+
             <h2 className="text-4xl md:text-5xl font-serif text-gray-800 mb-4">Thông Tin Lễ Cưới</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto rounded-full" />
           </div>
@@ -334,10 +653,23 @@ function App() {
                   <Calendar className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-4">Thời Gian</h3>
+                  <h3 className="text-2xl font-semibold text-gray-800 mb-4">Tiệc Nhà Trai</h3>
                   <div className="space-y-2 text-gray-700">
-                    <p className="text-lg"><strong>Ngày:</strong> Chủ Nhật, 30 tháng 11, 2025</p>
-                    <p className="text-lg"><strong>Giờ:</strong> 10:00 Sáng</p>
+                    <p className="text-lg">Chủ Nhật, 30 tháng 11, 2025</p>
+                    <p className="text-lg">10:00 sáng</p>
+
+                    <p className="text-lg font-medium mt-3">Địa điểm: Nhà Hàng Tiệc Cưới TTC Palace - Bến Tre</p>
+                    <p className="text-base">Số 16 Hai Bà Trưng, Phường An Hội, Tỉnh Bến Tre</p>
+
+                    <a
+                      href="https://maps.app.goo.gl/iiUyNZPxXga5Ecv1A"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 mt-3 text-rose-600 hover:text-rose-700 font-medium transition-colors"
+                    >
+                      <MapPin className="w-4 h-4" />
+                      Xem trên bản đồ
+                    </a>
                   </div>
                 </div>
               </div>
@@ -346,15 +678,17 @@ function App() {
             <div className="group bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 border border-white/50 hover:scale-105">
               <div className="flex items-start gap-6">
                 <div className="bg-gradient-to-br from-rose-400 to-pink-500 p-5 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
-                  <MapPin className="w-8 h-8 text-white" />
+                  <Calendar className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-4">Địa Điểm</h3>
+                  <h3 className="text-2xl font-semibold text-gray-800 mb-4">Tiệc Nhà Gái</h3>
                   <div className="space-y-2 text-gray-700">
-                    <p className="text-lg font-medium">Nhà Hàng Tiệc Cưới TTC Palace - Vĩnh Long (Bến Tre)</p>
-                    <p className="text-base">Bên cạnh bờ hồ Trúc Giang, số 16 Hai Bà Trưng, Phường An Hội , Tỉnh Vĩnh Long</p>
+                    <p className="text-lg">Thứ Bảy, 29 tháng 11, 2025</p>
+                    <p className="text-lg">02:00 chiều</p>
+
+                    <p className="text-lg font-medium mt-3">Địa điểm: Tư gia nhà gái - An Hòa, Phước Hiệp, Mỏ Cày Nam, Bến Tre</p>
                     <a
-                      href="https://maps.app.goo.gl/iiUyNZPxXga5Ecv1A"
+                      href="https://maps.app.goo.gl/GL87kLfR4XkRmUzVA"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 mt-3 text-rose-600 hover:text-rose-700 font-medium transition-colors"
@@ -384,52 +718,286 @@ function App() {
             </p>
           </div>
 
-          <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-2xl border border-white/50">
-            <RSVPForm />
+          <div className="flex justify-center">
+            {!showRSVP ? (
+              <button
+                onClick={() => setShowRSVP(true)}
+                className="inline-flex items-center gap-3 px-6 py-3 bg-rose-500 text-white rounded-3xl shadow-lg hover:scale-105 transition transform"
+              >
+                <Send className="w-5 h-5" />
+                Xác nhận tham dự
+              </button>
+            ) : (
+              <div className="w-full bg-white/70 backdrop-blur-lg rounded-3xl p-6 md:p-8 shadow-2xl border border-white/50 transform transition-all duration-300">
+                <div className="flex justify-end mb-4">
+                  <button
+                    onClick={() => setShowRSVP(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                    aria-label="Đóng form"
+                  >
+                    Đóng ✕
+                  </button>
+                </div>
+                <RSVPForm />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Gift Section - Subtle Design */}
+      {/* Gift Section - toggled by button */}
       <section className="relative py-24 px-4 bg-gradient-to-b from-transparent via-amber-50/30 to-transparent">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white/60 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-xl border border-white/50">
             <div className="text-center mb-8">
               <Gift className="w-10 h-10 text-rose-400 mx-auto mb-4 opacity-70" />
-              <h3 className="text-2xl md:text-3xl font-serif text-gray-700 mb-3">Gửi Lời Chúc</h3>
-              <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                Nếu bạn không thể đến tham dự nhưng vẫn muốn gửi lời chúc mừng,
+              <h3 className="text-2xl md:text-3xl font-serif text-gray-700 mb-3">Gửi Mừng Cưới</h3>
+              {/* <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                Nếu bạn không thể đến tham dự nhưng vẫn muốn chúc mừng,
                 chúng mình xin trân trọng cảm ơn tấm lòng của bạn.
-              </p>
+              </p> */}
             </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-center gap-8 pt-6 border-t border-gray-200">
-              <div className="text-center md:text-left space-y-3">
-                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
-                  <span className="text-sm font-medium text-gray-500">Ngân hàng:</span>
-                  <span className="font-semibold">Vietcombank</span>
-                </div>
-                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
-                  <span className="text-sm font-medium text-gray-500">STK:</span>
-                  <span className="font-semibold">0171003478512</span>
-                </div>
-                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
-                  <span className="text-sm font-medium text-gray-500">Chủ TK:</span>
-                  <span className="font-semibold">PHAN THI HONG THUY</span>
-                </div>
-              </div>
+            <div className="pt-6 border-t border-gray-200">
+              <div className="flex justify-center mb-6">
+                {!showWish ? (
+                  <button
+                    onClick={() => setShowWish(true)}
+                    className="inline-flex items-center gap-3 px-6 py-3 bg-rose-500 text-white rounded-3xl shadow-lg hover:scale-105 transition transform"
+                  >
+                    <Gift className="w-5 h-5" />
+                    Xem thông tin gửi mừng cưới
+                  </button>
+                ) : (
+                  <div className="w-full">
+                    <div className="flex justify-end mb-4">
+                      <button
+                        onClick={() => setShowWish(false)}
+                        className="text-gray-500 hover:text-gray-700"
+                        aria-label="Đóng thông tin gửi lời chúc"
+                      >
+                        Đóng ✕
+                      </button>
+                    </div>
 
-              <div className="flex-shrink-0">
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl shadow-md">
-                  <div className="w-40 h-40 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center">
-                    <img
-                      src="/assets/qr-vietcombank.jpg"
-                      alt="QR chuyển khoản Vietcombank"
-                      className="w-full h-full object-contain rounded-lg"
-                    />
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+                      <div className="text-center md:text-left space-y-3">
+                        <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
+                          <span className="text-sm font-medium text-gray-500">Ngân hàng:</span>
+                          <span className="font-semibold">Vietcombank</span>
+                        </div>
+                        <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
+                          <span className="text-sm font-medium text-gray-500">STK:</span>
+                          <span className="font-semibold">0171003478512</span>
+                        </div>
+                        <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
+                          <span className="text-sm font-medium text-gray-500">Chủ TK:</span>
+                          <span className="font-semibold">PHAN THI HONG THUY</span>
+                        </div>
+                      </div>
+
+                      <div className="flex-shrink-0">
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl shadow-md">
+                          <div className="w-40 h-40 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center">
+                            <img
+                              src="/assets/qr-vietcombank.jpg"
+                              alt="QR chuyển khoản Vietcombank"
+                              className="w-full h-full object-contain rounded-lg"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ALBUM HÌNH CƯỚI */}
+      <section className="relative py-24 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-serif text-gray-800 mb-4">Album Hình Cưới</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto rounded-full" />
+          </div>
+
+          {/* Top visible layout: use topReplacements for the 4 visible slots only */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {(() => {
+              const topReplacements = ['new_1.jpg','new_2.jpg','new_3.jpg','new_4.jpg'];
+              return (
+                <>
+                  <div className="lg:col-span-1">
+                    <div
+                      className="overflow-hidden rounded-3xl shadow-2xl relative group"
+                      data-anim="left"
+                      data-delay="0.05s"
+                    >
+                      <div className="w-full h-[60vh] lg:h-[80vh]">
+                        <img
+                          src={`/assets/album/${topReplacements[0]}`}
+                          alt={topReplacements[0]}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-3xl"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-2 flex flex-col gap-6">
+                    <div
+                      className="overflow-hidden rounded-3xl shadow-2xl relative group"
+                      data-anim="right"
+                      data-delay="0.12s"
+                    >
+                      <div className="w-full aspect-[16/9]">
+                        <img
+                          src={`/assets/album/${topReplacements[1]}`}
+                          alt={topReplacements[1]}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-3xl"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                      <div
+                        className="overflow-hidden rounded-3xl shadow-2xl relative group"
+                        data-anim="right"
+                        data-delay="0.20s"
+                      >
+                        <div className="w-full aspect-[4/3]">
+                          <img
+                            src={`/assets/album/${topReplacements[2]}`}
+                            alt={topReplacements[2]}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-3xl"
+                          />
+                        </div>
+                      </div>
+
+                      <div
+                        className="overflow-hidden rounded-3xl shadow-2xl relative group"
+                        data-anim="right"
+                        data-delay="0.28s"
+                      >
+                        <div className="w-full aspect-[4/3]">
+                          <img
+                            src={`/assets/album/${topReplacements[3]}`}
+                            alt={topReplacements[3]}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-3xl"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+
+          {/* Additional rows: featured block + remaining images */}
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
+            {(() => {
+              const featured = ['IMGL9901.jpg','IMGL9929.jpg','IMGL9869.jpg','IMGL9781.jpg','IMGL9450.jpg'];
+              const remaining = albumFiles.filter(f => !featured.includes(f));
+              const baseDelay = 0.35;
+              const nodes: JSX.Element[] = [];
+
+              // LEFT large (spans 2 cols x 2 rows on lg)
+              nodes.push(
+                <div
+                  key={featured[0]}
+                  className="overflow-hidden rounded-3xl shadow-2xl relative group lg:col-span-2 lg:row-span-2"
+                  data-anim="left"
+                  data-delay={`${baseDelay.toFixed(2)}s`}
+                  style={{ animationDelay: `${baseDelay.toFixed(2)}s` }}
+                >
+                  <img
+                    src={`/assets/album/${featured[0]}`}
+                    alt={featured[0]}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-3xl"
+                  />
+                </div>
+              );
+
+              // RIGHT four portrait tiles
+              featured.slice(1).forEach((file, i) => {
+                const delay = (baseDelay + 0.08 * (i + 1)).toFixed(2) + 's';
+                const animSide = (i + 1) % 2 === 0 ? 'left' : 'right';
+                nodes.push(
+                  <div
+                    key={file}
+                    className={`overflow-hidden rounded-3xl shadow-2xl relative group`}
+                    data-anim={animSide}
+                    data-delay={delay}
+                    style={{ animationDelay: delay }}
+                  >
+                    <div className="w-full h-full">
+                      <img
+                        src={`/assets/album/${file}`}
+                        alt={file}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-3xl"
+                      />
+                    </div>
+                  </div>
+                );
+              });
+
+              // remaining images (rendered after featured block)
+              remaining.forEach((file, j) => {
+                const idx = featured.length + j;
+                const delay = (baseDelay + 0.08 * idx).toFixed(2) + 's';
+                const animSide = idx % 2 === 0 ? 'left' : 'right';
+                nodes.push(
+                  <div
+                    key={file}
+                    className={`overflow-hidden rounded-3xl shadow-2xl relative group`}
+                    data-anim={animSide}
+                    data-delay={delay}
+                    style={{ animationDelay: delay }}
+                  >
+                    <div className="w-full h-full">
+                      <img
+                        src={`/assets/album/${file}`}
+                        alt={file}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-3xl"
+                      />
+                    </div>
+                  </div>
+                );
+              });
+
+              if (!showAllAlbum) {
+                const preview = nodes.slice(0, 4);
+                const remainingCount = nodes.length - preview.length;
+                return (
+                  <>
+                    {preview}
+                    <div className="lg:col-span-4 flex items-center justify-center">
+                      <button
+                        onClick={() => setShowAllAlbum(true)}
+                        className="px-6 py-4 bg-rose-500 text-white rounded-3xl shadow-lg hover:scale-105 transition transform"
+                      >
+                        Xem thêm {remainingCount} ảnh
+                      </button>
+                    </div>
+                  </>
+                );
+              }
+
+              return nodes;
+            })()}
+          </div>
+
+          {/* Banner hình ngang cuối album */}
+          <div className="mt-8">
+            <div className="overflow-hidden rounded-3xl shadow-2xl">
+              <img
+                src="/assets/album/IMGL9168.jpg"
+                alt="IMGL9168"
+                className="w-full h-[36vh] md:h-[48vh] lg:h-[56vh] object-cover rounded-3xl"
+              />
             </div>
           </div>
         </div>
@@ -454,7 +1022,7 @@ function App() {
           </div>
 
           <div className="text-gray-500 text-sm">
-            <p>With love, Hoàng Huy & Hồng Thủy</p>
+            <p>Made by chồng iu của Thỷ</p>
           </div>
         </div>
       </footer>

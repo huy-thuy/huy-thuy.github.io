@@ -1,6 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+
+/* existing imports */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* helper classes for script / serif usage */
+.font-lora { font-family: 'Lora', serif; }
+.font-script { font-family: 'Dancing Script', cursive; }
 
 @layer base {
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -198,6 +207,29 @@
 
 }
 
+
+@keyframes slideInLeft {
+  0% { opacity: 0; transform: translateX(-40px) scale(0.995); }
+  60% { opacity: 1; transform: translateX(8px) scale(1.002); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes slideInRight {
+  0% { opacity: 0; transform: translateX(40px) scale(0.995); }
+  60% { opacity: 1; transform: translateX(-8px) scale(1.002); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* tăng thời lượng từ 1.6s -> 2.4s để hiệu ứng trượt vào chậm hơn 50% */
+.animate-slide-in-left {
+  animation: slideInLeft 2.4s cubic-bezier(.22,.9,.34,1) both;
+  will-change: transform, opacity;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 2.4s cubic-bezier(.22,.9,.34,1) both;
+  will-change: transform, opacity;
+}
 
 html {
   scroll-behavior: smooth;
