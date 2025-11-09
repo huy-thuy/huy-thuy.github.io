@@ -444,7 +444,7 @@ function App() {
       <section className="relative py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-serif text-gray-800 mb-4">Câu Chuyện Của Chúng Mình</h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-gray-800 mb-4">Câu Chuyện Của Chúng Mình</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto rounded-full" />
           </div>
 
@@ -482,7 +482,7 @@ function App() {
       <section className="relative py-24 px-4 bg-gradient-to-b from-transparent via-rose-100/50 to-transparent">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-serif text-gray-800 mb-4">Đếm Ngược Hạnh Phúc</h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-gray-800 mb-4">Đếm Ngược Hạnh&nbsp;Phúc</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto rounded-full" />
           </div>
 
@@ -680,7 +680,7 @@ function App() {
               </div>
             </div>
 
-            <h2 className="text-4xl md:text-5xl font-serif text-gray-800 mb-4">Thông Tin Lễ Cưới</h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-gray-800 mb-4">Thông Tin Lễ Cưới</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto rounded-full" />
           </div>
 
@@ -697,7 +697,7 @@ function App() {
                     <p className="text-lg leading-relaxed">10:00 sáng</p>
 
                     <p className="text-lg font-medium mt-3">Địa điểm: Nhà Hàng TTC Palace - Bến Tre</p>
-                    <p className="text-lg leading-relaxed">Số 16 Hai Bà Trưng, Phường An Hội, Tỉnh Bến Tre</p>
+                    <p className="text-lg leading-relaxed">Số 16 Hai Bà Trưng, Phường An Hội, Tỉnh Bến&nbsp;Tre</p>
 
                     <a
                       href="https://maps.app.goo.gl/iiUyNZPxXga5Ecv1A"
@@ -725,7 +725,7 @@ function App() {
                     <p className="text-lg leading-relaxed">02:00 chiều</p>
 
                     <p className="text-lg font-medium mt-3">Địa điểm: Tư gia nhà gái</p>
-                    <p className="text-lg leading-relaxed">An Hòa, Phước Hiệp, Mỏ Cày Nam, Tỉnh Bến Tre</p>
+                    <p className="text-lg leading-relaxed">An Hòa, Phước Hiệp, Mỏ Cày Nam, Tỉnh Bến&nbsp;Tre</p>
 
                     <a
                       href="https://maps.app.goo.gl/GL87kLfR4XkRmUzVA"
@@ -751,7 +751,7 @@ function App() {
             <div className="inline-block bg-gradient-to-br from-rose-400 to-pink-500 p-6 rounded-3xl shadow-2xl mb-6 animate-bounce-slow">
               <Send className="w-12 h-12 text-white" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif text-gray-800 mb-4">Xác Nhận Tham Dự</h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-gray-800 mb-4">Xác Nhận Tham Dự</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto rounded-full mb-6" />
             <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
               Để chúng mình chuẩn bị chu đáo hơn, vui lòng xác nhận sự hiện diện của bạn
@@ -820,36 +820,87 @@ function App() {
                       </button>
                     </div>
 
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-                      <div className="text-center md:text-left space-y-3">
-                        <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
-                          <span className="text-sm font-medium text-gray-500">Ngân hàng:</span>
-                          <span className="font-semibold">Vietcombank</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Cô dâu */}
+                      <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col items-center">
+                        <h4 className="font-semibold text-lg mb-3">Cô dâu</h4>
+                        <div className="text-center md:text-left space-y-3 w-full max-w-xs">
+                          <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
+                            <span className="text-sm font-medium text-gray-500">Ngân hàng:</span>
+                            <span className="font-semibold">Vietcombank</span>
+                          </div>
+                          <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
+                            <span className="text-sm font-medium text-gray-500">STK:</span>
+                            <span className="font-semibold">0171003478512</span>
+                          </div>
+                          <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
+                            <span className="text-sm font-medium text-gray-500">Chủ TK:</span>
+                            <span className="font-semibold">PHAN THI HONG THUY</span>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
-                          <span className="text-sm font-medium text-gray-500">STK:</span>
-                          <span className="font-semibold">0171003478512</span>
-                        </div>
-                        <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
-                          <span className="text-sm font-medium text-gray-500">Chủ TK:</span>
-                          <span className="font-semibold">PHAN THI HONG THUY</span>
-                        </div>
-                      </div>
 
-                      <div className="flex-shrink-0">
-                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl shadow-md">
+                        <div className="mt-4">
                           <div className="w-40 h-40 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center">
                             <img
                               src="/assets/qr-vietcombank.jpg"
-                              alt="QR chuyển khoản Vietcombank"
+                              alt="QR Cô dâu"
                               className="w-full h-full object-contain rounded-lg"
                             />
                           </div>
                         </div>
+
+                        <div className="mt-4">
+                          <a
+                            href="/assets/qr-vietcombank.jpg"
+                            download
+                            className="px-5 py-2 bg-rose-500 text-white rounded-full shadow hover:opacity-90 transition"
+                          >
+                            Tải QR Cô dâu
+                          </a>
+                        </div>
+                      </div>
+
+                      {/* Chú rể */}
+                      <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col items-center">
+                        <h4 className="font-semibold text-lg mb-3">Chú rể</h4>
+                        <div className="text-center md:text-left space-y-3 w-full max-w-xs">
+                          <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
+                            <span className="text-sm font-medium text-gray-500">Ngân hàng:</span>
+                            <span className="font-semibold">BIDV</span>
+                          </div>
+                          <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
+                            <span className="text-sm font-medium text-gray-500">STK:</span>
+                            <span className="font-semibold">7210791318</span>
+                          </div>
+                          <div className="flex items-center justify-center md:justify-start gap-3 text-gray-700">
+                            <span className="text-sm font-medium text-gray-500">Chủ TK:</span>
+                            <span className="font-semibold">HUYNH HOANG HUY</span>
+                          </div>
+                        </div>
+
+                        <div className="mt-4">
+                          <div className="w-40 h-40 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center">
+                            <img
+                              src="/assets/qr-bidv.jpg"
+                              alt="QR Chú rể"
+                              className="w-full h-full object-contain rounded-lg"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="mt-4">
+                          <a
+                            href="/assets/qr-bidv.jpg"
+                            download
+                            className="px-5 py-2 bg-blue-500 text-white rounded-full shadow hover:opacity-90 transition"
+                          >
+                            Tải QR Chú rể
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
-                )}
+                 )}
               </div>
             </div>
           </div>
@@ -860,7 +911,7 @@ function App() {
       <section className="relative py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-serif text-gray-800 mb-4">Album Hình Cưới</h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-gray-800 mb-4">Album Hình Cưới</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto rounded-full" />
           </div>
 
