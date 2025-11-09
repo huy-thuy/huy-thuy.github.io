@@ -460,7 +460,7 @@ function App() {
 
             <div className="group relative overflow-hidden rounded-3xl shadow-2xl aspect-[4/5] animate-fade-in-right">
               <img
-                src="/assets/IMGL9201.jpg"
+                src="/assets/hinh_3.JPG"
                 alt="Couple 2"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
