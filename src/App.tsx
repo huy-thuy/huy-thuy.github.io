@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Heart, MapPin, Calendar, Clock, Gift, Volume2, VolumeX, ChevronDown, Send } from 'lucide-react';
+import { Heart, MapPin, Home, Calendar, Clock, Gift, Volume2, VolumeX, ChevronDown, Send } from 'lucide-react';
 import { RSVPForm } from './components/RSVPForm';
 
 // Fit text to single line: shrink font until fits container (force one line)
@@ -146,13 +146,13 @@ function App() {
     'IMGL0355.jpg',
     'IMGL0368.jpg',
     'IMGL0434.jpg',
-    'IMGL0576.jpg',
+    'IMGL1399.jpg',
     'IMGL0944.jpg',
-    'IMGL0268.jpg',
+    'hinh_2.JPG',
     'IMGL1720.jpg',
     'IMGL2897.jpg',
+    'hinh_3.JPG',
     'IMGL9201.jpg',
-    'IMGL9929.jpg',
     'IMGL9781.jpg',
     'IMGL9869.jpg',
     'IMGL9901.jpg',
@@ -161,20 +161,51 @@ function App() {
   ];
 
   useEffect(() => {
+    // create audio element (muted at start so browsers allow autoplay)
     audioRef.current = new Audio('/assets/mylove.mp3');
     audioRef.current.loop = true;
     audioRef.current.volume = 0.4;
+    audioRef.current.muted = true;
 
-    const playAudio = () => {
-      audioRef.current?.play().then(() => {
+    const tryAutoplay = async () => {
+      try {
+        await audioRef.current?.play();
+        // playing (muted)
         setIsPlaying(true);
-      }).catch(() => {});
+      } catch {
+        // autoplay with sound blocked — we'll wait for a user gesture
+      }
     };
+    tryAutoplay();
 
-    setTimeout(playAudio, 1000);
+    // On first user gesture, unmute and ensure playback with sound
+    const onFirstGesture = () => {
+      if (!audioRef.current) return;
+      audioRef.current.muted = false;
+      audioRef.current.volume = 0.4;
+      audioRef.current.play().catch(() => {});
+      setIsPlaying(true);
+      window.removeEventListener('click', onFirstGesture);
+      window.removeEventListener('touchstart', onFirstGesture);
+    };
+    window.addEventListener('click', onFirstGesture, { once: true });
+    window.addEventListener('touchstart', onFirstGesture, { once: true });
+
+    // pause when tab hidden, resume when visible
+    const handleVisibility = () => {
+      if (document.hidden) {
+        audioRef.current?.pause();
+      } else {
+        audioRef.current?.play().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       audioRef.current?.pause();
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('click', onFirstGesture);
+      window.removeEventListener('touchstart', onFirstGesture);
     };
   }, []);
 
@@ -239,10 +270,17 @@ function App() {
     if (isPlaying) {
       audioRef.current?.pause();
       setIsPlaying(false);
-    } else {
-      audioRef.current?.play();
-      setIsPlaying(true);
+      return;
     }
+
+    // user-initiated: ensure we have an audio element, unmute and play
+    if (!audioRef.current) {
+      audioRef.current = new Audio('/assets/mylove.mp3');
+      audioRef.current.loop = true;
+    }
+    audioRef.current.muted = false;
+    audioRef.current.volume = 0.4;
+    audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
   };
 
   return (
@@ -377,7 +415,7 @@ function App() {
           </div>
 
           <h2 className="text-2xl md:text-3xl text-white/90 font-light mb-4 tracking-widest uppercase">
-            Thư mời đám cưới
+            Thư mời cưới
           </h2>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-6 leading-tight">
@@ -422,7 +460,7 @@ function App() {
 
             <div className="group relative overflow-hidden rounded-3xl shadow-2xl aspect-[4/5] animate-fade-in-right">
               <img
-                src="/assets/hinh_3.JPG"
+                src="/assets/IMGL9201.jpg"
                 alt="Couple 2"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
@@ -649,17 +687,17 @@ function App() {
           <div className="grid md:grid-cols-2 gap-8">
             <div className="group bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 border border-white/50 hover:scale-105">
               <div className="flex items-start gap-6">
-                <div className="bg-gradient-to-br from-rose-400 to-pink-500 p-5 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
-                  <Calendar className="w-8 h-8 text-white" />
+                <div className="bg-gradient-to-br  p-5 rounded-2xl shadow-lg bg-white flex items-center justify-center group-hover:scale-110 transition-transform border border-gray-100">
+                  <Home className="w-12 h-12 text-blue-500" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-2xl font-semibold text-gray-800 mb-4">Tiệc Nhà Trai</h3>
                   <div className="space-y-2 text-gray-700">
-                    <p className="text-lg">Chủ Nhật, 30 tháng 11, 2025</p>
-                    <p className="text-lg">10:00 sáng</p>
+                    <p className="text-lg leading-relaxed">Chủ Nhật, 30 tháng 11, 2025</p>
+                    <p className="text-lg leading-relaxed">10:00 sáng</p>
 
-                    <p className="text-lg font-medium mt-3">Địa điểm: Nhà Hàng Tiệc Cưới TTC Palace - Bến Tre</p>
-                    <p className="text-base">Số 16 Hai Bà Trưng, Phường An Hội, Tỉnh Bến Tre</p>
+                    <p className="text-lg font-medium mt-3">Địa điểm: Nhà Hàng TTC Palace - Bến Tre</p>
+                    <p className="text-lg leading-relaxed">Số 16 Hai Bà Trưng, Phường An Hội, Tỉnh Bến Tre</p>
 
                     <a
                       href="https://maps.app.goo.gl/iiUyNZPxXga5Ecv1A"
@@ -677,16 +715,18 @@ function App() {
 
             <div className="group bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 border border-white/50 hover:scale-105">
               <div className="flex items-start gap-6">
-                <div className="bg-gradient-to-br from-rose-400 to-pink-500 p-5 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
-                  <Calendar className="w-8 h-8 text-white" />
+                <div className="bg-gradient-to-br p-5 rounded-2xl shadow-lg bg-white flex items-center justify-center group-hover:scale-110 transition-transform border border-gray-100">
+                  <Home className="w-12 h-12 text-rose-500" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-2xl font-semibold text-gray-800 mb-4">Tiệc Nhà Gái</h3>
                   <div className="space-y-2 text-gray-700">
-                    <p className="text-lg">Thứ Bảy, 29 tháng 11, 2025</p>
-                    <p className="text-lg">02:00 chiều</p>
+                    <p className="text-lg leading-relaxed">Thứ Bảy, 29 tháng 11, 2025</p>
+                    <p className="text-lg leading-relaxed">02:00 chiều</p>
 
-                    <p className="text-lg font-medium mt-3">Địa điểm: Tư gia nhà gái - An Hòa, Phước Hiệp, Mỏ Cày Nam, Bến Tre</p>
+                    <p className="text-lg font-medium mt-3">Địa điểm: Tư gia nhà gái</p>
+                    <p className="text-lg leading-relaxed">An Hòa, Phước Hiệp, Mỏ Cày Nam, Tỉnh Bến Tre</p>
+
                     <a
                       href="https://maps.app.goo.gl/GL87kLfR4XkRmUzVA"
                       target="_blank"
@@ -899,7 +939,7 @@ function App() {
           {/* Additional rows: featured block + remaining images */}
           <div className="mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
             {(() => {
-              const featured = ['IMGL9901.jpg','IMGL9929.jpg','IMGL9869.jpg','IMGL9781.jpg','IMGL9450.jpg'];
+              const featured = ['IMGL9901.jpg','IMGL9201.jpg','IMGL9869.jpg','IMGL9781.jpg','IMGL9450.jpg'];
               const remaining = albumFiles.filter(f => !featured.includes(f));
               const baseDelay = 0.35;
               const nodes: JSX.Element[] = [];
@@ -979,7 +1019,7 @@ function App() {
                         onClick={() => setShowAllAlbum(true)}
                         className="px-6 py-4 bg-rose-500 text-white rounded-3xl shadow-lg hover:scale-105 transition transform"
                       >
-                        Xem thêm {remainingCount} ảnh
+                        Xem thêm ảnh
                       </button>
                     </div>
                   </>
