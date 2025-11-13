@@ -148,10 +148,10 @@ function App() {
     'IMGL0434.jpg',
     'IMGL1399.jpg',
     'IMGL0944.jpg',
-    'hinh_2.JPG',
+    'IMGL2572.jpg',
     'IMGL1720.jpg',
     'IMGL2897.jpg',
-    'hinh_3.JPG',
+    'IMGL9516.jpg',
     'IMGL9201.jpg',
     'IMGL9781.jpg',
     'IMGL9869.jpg',
@@ -470,7 +470,7 @@ function App() {
 
           <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-2xl border border-white/50">
             <p className="text-lg md:text-xl text-gray-700 text-center leading-relaxed italic">
-              "Cảm ơn anh đã đến và cùng vui, cùng buồn với em trong suốt 9 năm qua. Từ nay, mình vẫn sẽ cùng nhau trải qua những chặng đường mới, với một danh phận mới, là-người-nhà,...anh nhé!"
+              "Cảm ơn em đã đến và cùng vui, cùng buồn với anh trong suốt 9 năm qua. Từ nay, mình vẫn sẽ cùng nhau trải qua những chặng đường mới, với một danh phận mới, là-người-nhà,...Em nhé!"
             </p>
           </div>
         </div>

@@ -20,14 +20,26 @@ export function RSVPForm() {
     console.log("🟢 Sending data to Google Script:", formData);
 
     try {
+      // Map new option to an allowed DB value to avoid violating existing CHECK constraint.
+      const attendanceToInsert =
+        formData.attendance_status === 'maybe_with_family'
+          ? 'maybe'
+          : formData.attendance_status;
+
+      // Preserve original intent by tagging message (so you can later update DB/migration and parse)
+      let messageToInsert = formData.message || null;
+      if (formData.attendance_status === 'maybe_with_family') {
+        messageToInsert = (messageToInsert ? messageToInsert + ' ' : '') + '[maybe_with_family]';
+      }
+
       const { error } = await supabase
         .from('rsvp')
         .insert([{
           guest_name: formData.guest_name,
           side: formData.side,
-          attendance_status: formData.attendance_status,
+          attendance_status: attendanceToInsert as any,
           phone: formData.phone || null,
-          message: formData.message || null
+          message: messageToInsert
         }]);
 
       // log and stop if DB insert failed (tránh gửi Google Script khi DB lỗi)
