@@ -152,8 +152,8 @@ export function RSVPForm() {
         <div className="space-y-3">
           {[ 
             { value: 'definitely', label: 'Chắc chắn sẽ đến', emoji: '✓', color: 'green' },
+            { value: 'maybe_with_family', label: 'Sẽ đến cùng người thương', emoji: '👪', color: 'green' },
             { value: 'maybe', label: 'Có lẽ sẽ đến', emoji: '?', color: 'green' },
-            { value: 'maybe_with_family', label: 'Có lẽ sẽ đến cùng người thân', emoji: '👪', color: 'yellow' },
             { value: 'cannot', label: 'Không thể đến', emoji: '✗', color: 'green' }
           ].map((option) => (
             <button
