@@ -5,7 +5,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export type AttendanceStatus = 'definitely' | 'maybe' | 'cannot';
+export type AttendanceStatus = 'definitely' | 'maybe' | 'maybe_with_family' | 'cannot';
 export type Side = 'bride' | 'groom';
 
 export interface RSVP {

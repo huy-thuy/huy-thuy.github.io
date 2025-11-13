@@ -21,12 +21,11 @@
     - Read access is also public to show attendance statistics
     - In production, you may want to add admin-only policies
 */
-
 CREATE TABLE IF NOT EXISTS rsvp (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   guest_name text NOT NULL,
   side text NOT NULL CHECK (side IN ('bride', 'groom')),
-  attendance_status text NOT NULL CHECK (attendance_status IN ('definitely', 'maybe', 'cannot')),
+  attendance_status text NOT NULL,
   phone text,
   message text,
   created_at timestamptz DEFAULT now()
@@ -45,3 +44,14 @@ CREATE POLICY "Anyone can view RSVPs"
   FOR SELECT
   TO anon, authenticated
   USING (true);
+
+-- bỏ constraint cũ (nếu tồn tại)
+ALTER TABLE rsvp
+  DROP CONSTRAINT IF EXISTS rsvp_attendance_status_check;
+
+-- thêm lại constraint với giá trị mới
+ALTER TABLE rsvp
+  ADD CONSTRAINT rsvp_attendance_status_check
+  CHECK (attendance_status IN ('definitely', 'maybe', 'maybe_with_family', 'cannot'));
+
+COMMIT;

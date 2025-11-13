@@ -29,9 +29,14 @@ export function RSVPForm() {
           phone: formData.phone || null,
           message: formData.message || null
         }]);
-      
-      const googleScriptURL = "https://script.google.com/macros/s/AKfycby8Emw73a17wEdY2c6-1TkGNw_gBsXTyosXzD2M3mVNXWc_8MCq6YFkIhZnMpDvSWRZ/exec"; // thay bằng link của bạn
-      
+
+      // log and stop if DB insert failed (tránh gửi Google Script khi DB lỗi)
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
+      }
+
+      const googleScriptURL = "https://script.google.com/macros/s/AKfycby8Emw73a17wEdY2c6-1TkGNw_gBsXTyosXzD2M3mVNXWc_8MCq6YFkIhZnMpDvSWRZ/exec";
       try {
         console.log("🟢 Sending data to Google Script:", formData);
 
@@ -133,9 +138,10 @@ export function RSVPForm() {
           Tình trạng tham dự <span className="text-rose-500">*</span>
         </label>
         <div className="space-y-3">
-          {[
+          {[ 
             { value: 'definitely', label: 'Chắc chắn sẽ đến', emoji: '✓', color: 'green' },
             { value: 'maybe', label: 'Có lẽ sẽ đến', emoji: '?', color: 'green' },
+            { value: 'maybe_with_family', label: 'Có lẽ sẽ đến cùng người thân', emoji: '👪', color: 'yellow' },
             { value: 'cannot', label: 'Không thể đến', emoji: '✗', color: 'green' }
           ].map((option) => (
             <button

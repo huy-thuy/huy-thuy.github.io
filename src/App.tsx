@@ -470,9 +470,7 @@ function App() {
 
           <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-2xl border border-white/50">
             <p className="text-lg md:text-xl text-gray-700 text-center leading-relaxed italic">
-              "Tình yêu không làm cho thế giới quay tròn. Tình yêu là những gì làm cho chuyến đi đáng giá.
-              Và hôm nay, chúng mình bắt đầu hành trình mới cùng nhau, với tất cả tình yêu thương và lời hứa
-              sẽ luôn bên nhau trọn đời."
+              "Cảm ơn anh đã đến và cùng vui, cùng buồn với em trong suốt 9 năm qua. Từ nay, mình vẫn sẽ cùng nhau trải qua những chặng đường mới, với một danh phận mới, là-người-nhà,...anh nhé!"
             </p>
           </div>
         </div>
