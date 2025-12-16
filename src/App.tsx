@@ -210,24 +210,26 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = weddingDate.getTime() - now;
+    const updateCountdown = () => {
+      const now = new Date();
+      const diff = now.getTime() - weddingDate.getTime();
 
-      if (distance < 0) {
-        clearInterval(timer);
+      if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         return;
       }
 
-      setTimeLeft({
-        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((distance % (1000 * 60)) / 1000)
-      });
-    }, 1000);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    return () => clearInterval(timer);
+      setTimeLeft({ days, hours, minutes, seconds });
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
   }, [weddingDate]);
 
   useEffect(() => {
@@ -480,7 +482,7 @@ function App() {
       <section className="relative py-24 px-4 bg-gradient-to-b from-transparent via-rose-100/50 to-transparent">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif text-gray-800 mb-4">Đếm Ngược Hạnh&nbsp;Phúc</h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-gray-800 mb-4">Đếm Ngày Hạnh&nbsp;Phúc</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-rose-400 to-pink-400 mx-auto rounded-full" />
           </div>
 
